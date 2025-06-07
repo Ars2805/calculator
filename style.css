@@ -37,11 +37,15 @@
   border-radius: 10px;
   background-color: #dcdcdc;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 .calculator__button:hover {
   background-color: #c0c0c0;
+}
+
+.calculator__button:active {
+  transform: scale(0.95);
 }
 
 .calculator__button--operator {
@@ -60,6 +64,24 @@
 
 .calculator__button--equal:hover {
   background-color: #43a047;
+}
+
+.calculator__button--clear {
+  background-color: #ef5350; 
+  color: white;
+}
+
+.calculator__button--clear:hover {
+  background-color: #e53935;
+}
+
+.calculator__button--backspace {
+  background-color: #fbc02d; 
+  color: black;
+}
+
+.calculator__button--backspace:hover {
+  background-color: #f9a825;
 }
 
 @media (max-width: 400px) {
