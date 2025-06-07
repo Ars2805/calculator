@@ -21,6 +21,10 @@ function calculate() {
 }
 
 function handleInput(value) {
+  if (currentInput === 'Ошибка') {
+    currentInput = '';
+  }
+  
   switch (value) {
     case 'C':
       currentInput = '';
@@ -96,7 +100,7 @@ buttons.forEach(button => {
 
 document.addEventListener('keydown', (e) => {
   const key = e.key;
-  
+
   const allowedKeys = ['0','1','2','3','4','5','6','7','8','9','.','+','-','*','/'];
 
   if (allowedKeys.includes(key)) {
