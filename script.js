@@ -2,6 +2,7 @@ const display = document.getElementById('display');
 const buttons = document.querySelectorAll('.calculator__button');
 
 let currentInput = '';
+let history = [];
 
 function updateDisplay() {
   display.value = currentInput;
@@ -10,11 +11,9 @@ function updateDisplay() {
 
 function calculate() {
   try {
-    let res = eval(currentInput).toString();
-    if (res.length > 12) {
-      res = Number(res).toExponential(6);
-    }
-    currentInput = res;
+    const result = eval(currentInput).toString();
+    addToHistory(currentInput, result);
+    currentInput = result.length > 12 ? Number(result).toExponential(6) : result;
   } catch {
     currentInput = 'Ошибка';
   }
@@ -32,7 +31,9 @@ function handleInput(value) {
     case '%':
       if (currentInput) {
         try {
-          currentInput = (eval(currentInput) / 100).toString();
+          const result = (eval(currentInput) / 100).toString();
+          addToHistory(`${currentInput} %`, result);
+          currentInput = result;
         } catch {
           currentInput = 'Ошибка';
         }
@@ -41,8 +42,9 @@ function handleInput(value) {
     case '+/-':
       if (currentInput) {
         try {
-          let val = eval(currentInput);
-          currentInput = (-val).toString();
+          const result = (-eval(currentInput)).toString();
+          addToHistory(`${currentInput} +/-`, result);
+          currentInput = result;
         } catch {
           currentInput = 'Ошибка';
         }
@@ -58,6 +60,34 @@ function handleInput(value) {
   updateDisplay();
 }
 
+function addToHistory(expression, result) {
+  history.unshift({ expression, result });
+  if (history.length > 10) history.pop();
+  renderHistoryPopup();
+}
+
+function renderHistoryPopup() {
+  const historyPopup = document.getElementById('historyPopup');
+  if (!historyPopup) return;
+
+  historyPopup.innerHTML = '';
+  if (history.length === 0) {
+    historyPopup.textContent = 'История пуста';
+    return;
+  }
+
+  history.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'calculator__history-item';
+    div.textContent = `${item.expression} = ${item.result}`;
+    div.addEventListener('click', () => {
+      currentInput = item.expression;
+      updateDisplay();
+    });
+    historyPopup.appendChild(div);
+  });
+}
+
 buttons.forEach(button => {
   button.addEventListener('click', () => {
     handleInput(button.textContent);
@@ -66,8 +96,7 @@ buttons.forEach(button => {
 
 document.addEventListener('keydown', (e) => {
   const key = e.key;
-
-  // Разрешённые клавиши: цифры, операторы и точки
+  
   const allowedKeys = ['0','1','2','3','4','5','6','7','8','9','.','+','-','*','/'];
 
   if (allowedKeys.includes(key)) {
