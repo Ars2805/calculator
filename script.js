@@ -24,7 +24,7 @@ function handleInput(value) {
   if (currentInput === 'Ошибка') {
     currentInput = '';
   }
-  
+
   switch (value) {
     case 'C':
       currentInput = '';
@@ -58,7 +58,15 @@ function handleInput(value) {
       calculate();
       return;
     default:
-      currentInput += value;
+      if (currentInput === '0' && value === '0') {
+        return; // не добавляем второй 0
+      } else if (currentInput === '0' && value.match(/\d/)) {
+        currentInput = value; // заменяем 0 на новую цифру
+      } else {
+        currentInput += value;
+      }
+      // Автокоррекция ведущих нулей
+      currentInput = currentInput.replace(/(^|[^.\d])0+(\d)/g, '$1$2');
       break;
   }
   updateDisplay();
